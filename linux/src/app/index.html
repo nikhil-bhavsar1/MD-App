@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HyperMark — Cyberpunk Markdown Studio for Linux Fedora 44</title>
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- KaTeX CSS & JS for LaTeX Math Rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    
+    <!-- Mermaid JS for Flowcharts & Diagrams -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    
+    <!-- Marked JS for GFM Markdown Compilation -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
+</head>
+<body>
+    <div id="app-container">
+        <!-- Top Navigation Bar -->
+        <header id="top-bar">
+            <div class="top-bar-left">
+                <button id="btn-toggle-sidebar" class="icon-btn" title="Toggle Documents Sidebar">☰</button>
+                <input type="text" id="doc-title-input" value="Untitled" title="Click to rename document">
+            </div>
+
+            <div class="top-bar-center">
+                <button id="btn-open-graph" class="icon-btn" title="Open Interactive Topology Graph & Folder Tree (Ctrl+G)">🕸️</button>
+                <div class="pill-group">
+                    <button id="btn-mode-editor" class="pill-btn">Editor</button>
+                    <button id="btn-mode-split" class="pill-btn active">Split</button>
+                    <button id="btn-mode-preview" class="pill-btn">Preview</button>
+                </div>
+            </div>
+
+            <div class="top-bar-right">
+                <button id="btn-toggle-find" class="icon-btn" title="Find & Replace (Ctrl+F)">🔍</button>
+                <button id="btn-open-vault" class="icon-btn" title="Local Storage Vault">💾</button>
+                <button id="btn-export-md" class="icon-btn" title="Save Active File to Disk (Ctrl+S)">⬇️</button>
+                <button id="btn-fullscreen" class="icon-btn" title="Toggle Fullscreen">⛶</button>
+            </div>
+        </header>
+
+        <!-- Main Workspace -->
+        <main id="main-workspace">
+            <!-- Sidebar Drawer -->
+            <aside id="sidebar">
+                <div class="sidebar-header">
+                    <span class="sidebar-title">📁 Documents Vault</span>
+                    <button id="btn-close-sidebar" class="icon-btn">✕</button>
+                </div>
+
+                <input type="text" id="sidebar-search-input" class="sidebar-search" placeholder="Search files & tags...">
+
+                <div class="sidebar-actions">
+                    <button id="btn-new-doc" class="btn-primary">+ New Doc</button>
+                    <button id="btn-import-file" class="btn-primary">📂 Open .md</button>
+                    <input type="file" id="file-picker" accept=".md,.markdown,.txt" style="display: none;">
+                </div>
+
+                <div id="sidebar-doc-list" class="sidebar-doc-list">
+                    <!-- Document items rendered via JS -->
+                </div>
+            </aside>
+
+            <!-- Editor & Preview Split Panes -->
+            <div id="content-split">
+                <!-- Editor Pane -->
+                <section id="editor-pane" class="pane">
+                    <!-- Formatting Toolbar -->
+                    <div id="format-toolbar">
+                        <button class="tool-btn" data-prefix="**" data-suffix="**" title="Bold (Ctrl+B)">B</button>
+                        <button class="tool-btn" data-prefix="*" data-suffix="*" title="Italic (Ctrl+I)">I</button>
+                        <button class="tool-btn" data-prefix="`" data-suffix="`" title="Inline Code">Code</button>
+                        <button class="tool-btn" data-prefix="$" data-suffix="$" title="Inline Math">$x$</button>
+                        <button class="tool-btn" data-prefix="$$&#10;" data-suffix="&#10;$$" title="Display Math Block">$$</button>
+                        <button class="tool-btn" data-prefix="[[ " data-suffix=" ]]" title="Wiki Link">[[ ]]</button>
+                        <button class="tool-btn" data-prefix="> [!NOTE]&#10;> " data-suffix="" title="Callout Note">Note</button>
+                        <button class="tool-btn" data-prefix="- [ ] " data-suffix="" title="Task Checklist">- [ ]</button>
+                        <button class="tool-btn" data-prefix="| Col 1 | Col 2 |&#10;| --- | --- |&#10;| Val 1 | Val 2 |&#10;" data-suffix="" title="Markdown Table">Table</button>
+                    </div>
+
+                    <!-- Floating Find & Replace Bar -->
+                    <div id="find-replace-bar" style="display: none;">
+                        <input type="text" id="find-query" class="find-input" placeholder="Find in markdown...">
+                        <span id="find-match-count" style="font-size: 11px; color: var(--accent-cyan); font-family: var(--font-mono); min-width: 32px;">0/0</span>
+                        <button id="btn-find-prev" class="icon-btn" style="width: 26px; height: 26px;">▲</button>
+                        <button id="btn-find-next" class="icon-btn" style="width: 26px; height: 26px;">▼</button>
+                        <input type="text" id="replace-query" class="find-input" placeholder="Replace with...">
+                        <button id="btn-replace-current" class="btn-primary" style="flex: none; padding: 4px 8px; font-size: 11px;">Replace</button>
+                        <button id="btn-replace-all" class="btn-primary" style="flex: none; padding: 4px 8px; font-size: 11px;">All</button>
+                        <button id="btn-close-find" class="icon-btn" style="width: 26px; height: 26px;">✕</button>
+                    </div>
+
+                    <!-- Editor Gutter + Textarea -->
+                    <div class="editor-wrapper">
+                        <div id="line-numbers" class="line-numbers">1</div>
+                        <textarea id="editor-textarea" spellcheck="false" placeholder="Write markdown, LaTeX formulas, or Mermaid diagrams..."></textarea>
+                    </div>
+                </section>
+
+                <!-- Split Divider -->
+                <div id="split-divider"></div>
+
+                <!-- Preview Pane -->
+                <section id="preview-pane" class="pane">
+                    <div id="preview-container">
+                        <!-- Rendered HTML inserted here -->
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Bottom Telemetry Bar -->
+        <footer id="telemetry-bar">
+            <div class="telemetry-item">
+                <span style="color: var(--accent-cyan); font-weight: bold;">● LIVE AST</span>
+            </div>
+            <div class="telemetry-item">
+                <span class="telemetry-label">LINES:</span>
+                <span id="stat-lines" class="telemetry-val">1</span>
+            </div>
+            <div class="telemetry-item">
+                <span class="telemetry-label">WORDS:</span>
+                <span id="stat-words" class="telemetry-val">0</span>
+            </div>
+            <div class="telemetry-item">
+                <span class="telemetry-label">CHARS:</span>
+                <span id="stat-chars" class="telemetry-val">0</span>
+            </div>
+            <div class="telemetry-item">
+                <span class="telemetry-label">READ:</span>
+                <span id="stat-read" class="telemetry-val" style="color: var(--accent-amber);">~1m</span>
+            </div>
+            <div class="telemetry-item">
+                <span class="telemetry-label">LATEX:</span>
+                <span id="stat-latex" class="telemetry-val" style="color: var(--accent-emerald);">0 eq</span>
+            </div>
+            <div class="telemetry-item">
+                <span class="telemetry-label">DIAGRAMS:</span>
+                <span id="stat-diagrams" class="telemetry-val" style="color: var(--accent-violet);">0 diag</span>
+            </div>
+            <div class="telemetry-item" style="margin-left: auto;">
+                <span class="telemetry-label">VAULT:</span>
+                <span class="telemetry-val" style="color: var(--accent-emerald);">SYNCED .MD</span>
+            </div>
+        </footer>
+
+        <!-- Fullscreen Network Topology Graph & Folder Tree Modal -->
+        <div id="graph-modal" class="hidden">
+            <div id="graph-top-bar">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <button id="btn-close-graph" class="icon-btn" title="Back to Editor">←</button>
+                    <input type="text" id="graph-search-input" class="find-input" placeholder="Filter files, tags, notes..." style="width: 240px;">
+                    
+                    <div class="pill-group">
+                        <button id="btn-graph-mode-network" class="pill-btn active">🕸️ Network Graph</button>
+                        <button id="btn-graph-mode-tree" class="pill-btn">🌲 Folder Tree</button>
+                    </div>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button id="btn-graph-filter-folders" class="pill-btn active">📁 Folder Nodes</button>
+                    <button id="btn-graph-filter-tags" class="pill-btn active">#️⃣ Tag Nodes</button>
+                    <button id="btn-graph-text-scale" class="pill-btn">Text: 100%</button>
+                </div>
+            </div>
+
+            <!-- Network Topology Graph Canvas View -->
+            <div id="graph-canvas-container" style="position: relative; flex: 1; width: 100%; height: 100%; overflow: hidden;">
+                <canvas id="graph-canvas"></canvas>
+
+                <!-- Floating Zoom Controls -->
+                <div class="floating-actions">
+                    <button id="btn-zoom-in" class="floating-btn" title="Zoom In">+</button>
+                    <button id="btn-zoom-out" class="floating-btn" title="Zoom Out">−</button>
+                    <button id="btn-zoom-fit" class="floating-btn" title="Fit View">⛶</button>
+                    <button id="btn-reset-layout" class="floating-btn" title="Reset Layout">↻</button>
+                </div>
+
+                <!-- Bottom Inspector Card for Selected Node in Graph Mode -->
+                <div id="graph-inspector" class="hidden">
+                    <div class="inspector-row">
+                        <div style="display: flex; align-items: center; gap: 10px; max-width: 75%;">
+                            <div id="inspector-node-dot" style="width: 12px; height: 12px; border-radius: 50%; background: var(--accent-cyan);"></div>
+                            <span id="inspector-doc-title" style="font-weight: 700; font-size: 16px; color: #FFFFFF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Document</span>
+                        </div>
+                        <button id="btn-inspector-open" class="btn-open-editor">✏️ Open in Editor</button>
+                    </div>
+
+                    <div id="inspector-badges" style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">
+                        <span id="inspector-badge-chars" style="background: rgba(30, 41, 59, 0.8); color: var(--text-secondary); padding: 2px 8px; border-radius: 6px; font-size: 11px;">0 chars</span>
+                        <span id="inspector-badge-links" style="background: rgba(192, 132, 252, 0.2); color: var(--accent-violet); padding: 2px 8px; border-radius: 6px; font-size: 11px;">Linked: 0 docs</span>
+                    </div>
+
+                    <div id="inspector-snippet" style="font-size: 12px; color: var(--text-muted); margin-top: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
+
+                    <div id="inspector-connected-row" style="display: flex; gap: 6px; margin-top: 10px; overflow-x: auto;"></div>
+                </div>
+            </div>
+
+            <!-- Folder Tree View Container -->
+            <div id="folder-tree-container" style="display: none;">
+                <!-- Rendered dynamically via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script src="js/defaultDocs.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

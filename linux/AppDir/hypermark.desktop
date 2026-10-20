@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=HyperMark
+GenericName=Markdown Editor & Graph Studio
+Comment=Cyberpunk Markdown Editor with LaTeX Math, Cytoscape, Mermaid & Network Topology Graph
+Exec=hypermark %F
+Icon=hypermark
+Terminal=false
+Categories=Office;Development;TextEditor;Utility;
+MimeType=text/markdown;text/plain;text/x-markdown;
+StartupNotify=true
+StartupWMClass=hypermark
+Keywords=markdown;latex;katex;graph;topology;editor;notes;cytoscape;mermaid;

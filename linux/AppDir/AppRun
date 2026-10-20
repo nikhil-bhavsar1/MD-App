@@ -1,0 +1,14 @@
+#!/bin/bash
+# AppRun entrypoint for HyperMark AppImage / Standalone executable on Fedora 44
+HERE="$(dirname "$(readlink -f "${0}")")"
+export APPDIR="${HERE}"
+export PATH="${HERE}/usr/bin:${PATH}"
+export XDG_DATA_DIRS="${HERE}/usr/share:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
+
+# Launch HyperMark
+if command -v python3 >/dev/null 2>&1; then
+    exec python3 "${HERE}/usr/bin/hypermark" "$@"
+else
+    # Fallback to python
+    exec python "${HERE}/usr/bin/hypermark" "$@"
+fi
