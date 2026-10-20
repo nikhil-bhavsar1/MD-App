@@ -1,0 +1,6 @@
+{
+  "name": "HyperMark",
+  "description": "Maximalist dark-mode Markdown IDE with live split preview, LaTeX & CTAN packages, Mermaid diagrams, Cytoscape + Dagre graph visualizer, and syntax highlighting.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
