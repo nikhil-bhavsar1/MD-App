@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Border frame container -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#38BDF8"
+        android:strokeWidth="2.5"
+        android:pathData="M30,28 L78,28 C82,28 85,31 85,35 L85,73 C85,77 82,80 78,80 L30,80 C26,80 23,77 23,73 L23,35 C23,31 26,28 30,28 Z" />
+
+    <!-- Markdown 'M' shape -->
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M31,42 L36,42 L43,51 L50,42 L55,42 L55,66 L49,66 L49,52 L43,60 L37,52 L37,66 L31,66 Z" />
+
+    <!-- Arrow down (symbol of Markdown) -->
+    <path
+        android:fillColor="#C084FC"
+        android:pathData="M68,43 L74,43 L74,54 L79,54 L71,65 L63,54 L68,54 Z" />
+
+    <!-- Graph node accents -->
+    <path
+        android:fillColor="#34D399"
+        android:pathData="M60,34 A3,3 0 1,1 60,34.01" />
+    <path
+        android:fillColor="#F472B6"
+        android:pathData="M80,72 A3,3 0 1,1 80,72.01" />
+</vector>
