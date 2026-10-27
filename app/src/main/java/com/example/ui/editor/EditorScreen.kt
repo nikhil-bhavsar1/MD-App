@@ -14,6 +14,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -93,7 +94,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -685,6 +688,32 @@ fun EditorPane(
                     ),
                     visualTransformation = visualTransformation,
                     cursorBrush = SolidColor(Color(0xFF00E5FF))
+                )
+            }
+        }
+
+        Canvas(
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .fillMaxHeight()
+                .width(8.dp)
+                .padding(vertical = 8.dp)
+        ) {
+            val maxScroll = scrollState.maxValue
+            val viewportSize = scrollState.viewportSize
+            if (maxScroll > 0 && viewportSize > 0) {
+                val thumbWidth = 4.dp.toPx()
+                val thumbHeight = (size.height * viewportSize / (viewportSize + maxScroll))
+                    .coerceAtLeast(24.dp.toPx())
+                    .coerceAtMost(size.height)
+                val scrollProgress = scrollState.value.toFloat() / maxScroll
+                val thumbTop = (size.height - thumbHeight) * scrollProgress
+
+                drawRoundRect(
+                    color = Color(0xFF00E5FF).copy(alpha = 0.65f),
+                    topLeft = Offset((size.width - thumbWidth) / 2f, thumbTop),
+                    size = Size(thumbWidth, thumbHeight),
+                    cornerRadius = CornerRadius(thumbWidth / 2f)
                 )
             }
         }

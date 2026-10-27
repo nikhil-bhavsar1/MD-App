@@ -83,6 +83,30 @@ object MarkdownRendererHtml {
             word-wrap: break-word;
         }
 
+        html {
+            scrollbar-color: rgba(0, 229, 255, 0.65) transparent;
+            scrollbar-width: thin;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 229, 255, 0.65);
+            border: 1px solid var(--bg-color);
+            border-radius: 999px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--accent-cyan);
+        }
+
         h1, h2, h3, h4, h5, h6 {
             color: #FFFFFF;
             margin-top: 1.4em;
