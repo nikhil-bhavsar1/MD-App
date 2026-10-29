@@ -32,6 +32,7 @@ class MarkdownVisualTransformation(
         highlightCtanCommands(raw, builder)
         highlightLinks(raw, builder)
         highlightTasks(raw, builder)
+        highlightTables(raw, builder)
 
         // Highlight selected code range if present and non-collapsed
         if (!selectedRange.collapsed && selectedRange.min >= 0 && selectedRange.max <= raw.length) {
@@ -289,6 +290,19 @@ class MarkdownVisualTransformation(
         }
     }
 
+    private fun highlightTables(raw: String, builder: AnnotatedString.Builder) {
+        for (match in TABLE_DELIM_REGEX.findAll(raw)) {
+            builder.addStyle(
+                SpanStyle(
+                    color = Color(0xFF00E5FF).copy(alpha = 0.7f),
+                    fontWeight = FontWeight.Bold
+                ),
+                match.range.first,
+                match.range.last + 1
+            )
+        }
+    }
+
     companion object {
         private val HEADER_REGEX = Regex("^(#{1,6})\\s+(.*)$", RegexOption.MULTILINE)
         private val CODE_BLOCK_REGEX = Regex("```([a-zA-Z0-9_-]*)\\n([\\s\\S]*?)```")
@@ -305,5 +319,6 @@ class MarkdownVisualTransformation(
         private val LINK_REGEX = Regex("(?<!\\!)\\[([^\\]]+)\\]\\(([^\\)]+)\\)")
         private val IMG_REGEX = Regex("!\\[([^\\]]*)\\]\\(([^\\)]+)\\)")
         private val TASK_REGEX = Regex("^\\s*-\\s*(\\[[ xX]\\])", RegexOption.MULTILINE)
+        private val TABLE_DELIM_REGEX = Regex("^\\s*\\|\\s*(?:[-:]+\\s*\\|)+\\s*$", RegexOption.MULTILINE)
     }
 }

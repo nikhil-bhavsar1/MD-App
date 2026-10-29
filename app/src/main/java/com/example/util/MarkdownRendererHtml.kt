@@ -300,39 +300,103 @@ object MarkdownRendererHtml {
             border: 1px solid rgba(244, 114, 182, 0.2);
         }
 
-        /* Tables */
-        table {
+        /* Tables & Responsive Wrapper */
+        .table-wrapper {
             width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
             margin: 1.4em 0;
-            background: var(--surface-color);
-            border: 1px solid var(--border-color);
+            overflow-x: auto;
             border-radius: 8px;
-            overflow: hidden;
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            background: var(--surface-color);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0, 229, 255, 0.4) transparent;
         }
 
-        th, td {
-            padding: 10px 14px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
+        .table-wrapper::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-track {
+            background: rgba(8, 13, 24, 0.7);
+            border-radius: 4px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-thumb {
+            background: rgba(56, 189, 248, 0.4);
+            border-radius: 4px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-cyan);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-spacing: 0;
+            margin: 1.4em 0;
+            font-size: 0.95em;
+            background: var(--surface-color);
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .table-wrapper table {
+            margin: 0;
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        thead {
+            background: #162032;
         }
 
         th {
-            background: #162032;
-            color: var(--accent-cyan);
+            padding: 12px 16px;
             font-weight: 700;
-            font-size: 0.9em;
+            font-size: 0.88em;
             text-transform: uppercase;
-            letter-spacing: 0.03em;
+            letter-spacing: 0.04em;
+            color: var(--accent-cyan);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-bottom: 2px solid var(--accent-cyan);
+            white-space: nowrap;
+            text-align: left;
         }
 
-        tr:last-child td {
-            border-bottom: none;
+        td {
+            padding: 10px 16px;
+            color: var(--text-primary);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            font-size: 0.92em;
+            line-height: 1.5;
+            text-align: left;
         }
 
-        tr:nth-child(even) {
-            background: rgba(255, 255, 255, 0.015);
+        /* GFM alignment attributes */
+        th[align="left"], td[align="left"] {
+            text-align: left;
+        }
+
+        th[align="center"], td[align="center"] {
+            text-align: center;
+        }
+
+        th[align="right"], td[align="right"] {
+            text-align: right;
+        }
+
+        tbody tr:nth-child(even) td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        tbody tr:hover td {
+            background: rgba(0, 229, 255, 0.06);
+            transition: background 0.15s ease;
         }
 
         /* Charts Container */
@@ -550,11 +614,40 @@ object MarkdownRendererHtml {
                         headerIds: true
                     });
                     processed = marked.parse(processed);
+                    processed = processed.replace(/<table(\b[^>]*)>([\s\S]*?)<\/table>/gi, '<div class="table-wrapper"><table$1>$2</table></div>');
                 } catch(e) {
                     console.warn("Marked parse error", e);
                 }
             } else {
                 // Fallback instant parser when offline or CDN loading
+                processed = processed.replace(/^(\|.+?\|[\r\n]+\|[-:\s|]+?\|[\r\n]+(?:\|.+?\|[\r\n]*)+)/gm, function(match) {
+                    const lines = match.trim().split('\n').filter(function(l) { return l.trim().length > 0; });
+                    if (lines.length < 2) return match;
+                    const headers = lines[0].split('|').slice(1, -1).map(function(h) { return h.trim(); });
+                    const alignments = lines[1].split('|').slice(1, -1).map(function(a) {
+                        const s = a.trim();
+                        if (s.startsWith(':') && s.endsWith(':')) return 'center';
+                        if (s.endsWith(':')) return 'right';
+                        return 'left';
+                    });
+                    let out = '<div class="table-wrapper"><table><thead><tr>';
+                    headers.forEach(function(h, i) {
+                        const align = alignments[i] || 'left';
+                        out += '<th align="' + align + '">' + h + '</th>';
+                    });
+                    out += '</tr></thead><tbody>';
+                    for (let r = 2; r < lines.length; r++) {
+                        const cells = lines[r].split('|').slice(1, -1).map(function(c) { return c.trim(); });
+                        out += '<tr>';
+                        headers.forEach(function(_, i) {
+                            const align = alignments[i] || 'left';
+                            out += '<td align="' + align + '">' + (cells[i] || '') + '</td>';
+                        });
+                        out += '</tr>';
+                    }
+                    out += '</tbody></table></div>';
+                    return out;
+                });
                 processed = processed
                     .replace(/^### (.*$)/gim, '<h3 style="color:#C084FC;margin:12px 0;">$1</h3>')
                     .replace(/^## (.*$)/gim, '<h2 style="color:#38BDF8;border-bottom:1px solid #1E293B;padding-bottom:4px;margin:16px 0;">$1</h2>')

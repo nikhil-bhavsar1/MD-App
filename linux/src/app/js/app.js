@@ -668,6 +668,9 @@ class HyperMarkApp {
         // 2. Parse Markdown via Marked
         let html = marked.parse(processed, { gfm: true, breaks: true });
 
+        // Wrap tables in responsive scroll wrapper
+        html = html.replace(/<table(\b[^>]*)>([\s\S]*?)<\/table>/gi, '<div class="table-wrapper"><table$1>$2</table></div>');
+
         // 3. Re-inject KaTeX math (split/join — immune to $& patterns)
         mathBlocks.forEach((item) => {
             let rendered = item.eq;
@@ -2288,11 +2291,24 @@ class HyperMarkApp {
         const text = this.editor.value;
         const selected = text.substring(start, end);
 
-        const replacement = prefix + (selected || "text") + suffix;
+        let replacement;
+        let newSelStart;
+        let newSelEnd;
+
+        if (suffix) {
+            const body = selected || "text";
+            replacement = prefix + body + suffix;
+            newSelStart = start + prefix.length;
+            newSelEnd = newSelStart + body.length;
+        } else {
+            replacement = prefix + selected;
+            newSelStart = newSelEnd = start + replacement.length;
+        }
+
         this.editor.value = text.substring(0, start) + replacement + text.substring(end);
         this.editor.focus();
-        this.editor.selectionStart = start + prefix.length;
-        this.editor.selectionEnd = start + prefix.length + (selected ? selected.length : 4);
+        this.editor.selectionStart = newSelStart;
+        this.editor.selectionEnd = newSelEnd;
 
         this.editor.dispatchEvent(new Event("input"));
     }

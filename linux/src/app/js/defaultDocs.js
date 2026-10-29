@@ -122,13 +122,16 @@ nothing downloads until you press the button.
 
 ## Desktop Keyboard Shortcuts
 
-- \`Ctrl + S\` : Save active document to the local Linux vault
-- \`Ctrl + N\` : Create a new document
-- \`Ctrl + F\` : Toggle Find & Replace bar
-- \`Ctrl + G\` : Toggle Network Topology Graph view
-- \`Ctrl + M\` : Open the radial Formatting Wheel
-- \`Ctrl + P\` : Toggle Fullscreen Preview
-- \`Tab\`      : Indent (2 spaces) · \`Enter\` continues lists & checklists
+| Shortcut | Command | Action |
+| :--- | :--- | :--- |
+| `Ctrl + S` | Save File | Saves active document to local Linux vault |
+| `Ctrl + N` | New Document | Creates a new blank markdown buffer |
+| `Ctrl + F` | Find & Replace | Opens interactive in-document search bar |
+| `Ctrl + G` | Topology Graph | Opens network visualization canvas |
+| `Ctrl + M` | Radial Menu | Opens circular quick formatting palette |
+| `Ctrl + P` | Preview Mode | Switches between Split and Preview |
+| `Tab` | Indent / Nest | Indents 2 spaces (Enter continues lists) |
+
 
 ## Local Vault Storage
 Your notes are stored as plain \`.md\` files in the Linux vault:

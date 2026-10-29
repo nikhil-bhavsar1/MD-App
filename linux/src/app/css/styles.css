@@ -443,6 +443,128 @@ html, body {
     overflow-x: auto;
 }
 
+/* Tables & Responsive Wrapper */
+#preview-container .table-wrapper {
+    width: 100%;
+    margin: 1.4em 0;
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    background: rgba(13, 21, 38, 0.85);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 229, 255, 0.4) transparent;
+}
+
+#preview-container .table-wrapper::-webkit-scrollbar {
+    height: 6px;
+}
+
+#preview-container .table-wrapper::-webkit-scrollbar-track {
+    background: rgba(8, 13, 24, 0.7);
+    border-radius: 4px;
+}
+
+#preview-container .table-wrapper::-webkit-scrollbar-thumb {
+    background: rgba(56, 189, 248, 0.4);
+    border-radius: 4px;
+}
+
+#preview-container .table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-cyan);
+}
+
+#preview-container table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    margin: 1.4em 0;
+    font-size: 0.95em;
+    background: rgba(13, 21, 38, 0.85);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+#preview-container .table-wrapper table {
+    margin: 0;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+#preview-container thead {
+    background: linear-gradient(180deg, #16243C 0%, #111C30 100%);
+}
+
+#preview-container th {
+    padding: 12px 16px;
+    font-weight: 700;
+    font-size: 0.88em;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--accent-cyan);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-bottom: 2px solid var(--accent-cyan);
+    white-space: nowrap;
+    text-align: left;
+}
+
+#preview-container td {
+    padding: 10px 16px;
+    color: #E2E8F0;
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    font-size: 0.92em;
+    line-height: 1.5;
+    text-align: left;
+}
+
+/* Explicit alignment handling for GFM columns */
+#preview-container th[align="left"],
+#preview-container td[align="left"] {
+    text-align: left;
+}
+
+#preview-container th[align="center"],
+#preview-container td[align="center"] {
+    text-align: center;
+}
+
+#preview-container th[align="right"],
+#preview-container td[align="right"] {
+    text-align: right;
+}
+
+/* Row striping & hover */
+#preview-container tbody tr:nth-child(even) td {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+#preview-container tbody tr:hover td {
+    background: rgba(0, 229, 255, 0.06);
+    transition: background 0.15s ease;
+}
+
+/* Lists and Divider */
+#preview-container ul,
+#preview-container ol {
+    margin: 0.8em 0 1em 1.6em;
+    color: #E2E8F0;
+}
+
+#preview-container li {
+    margin-bottom: 0.35em;
+    line-height: 1.6;
+}
+
+#preview-container hr {
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.4), transparent);
+    margin: 1.8em 0;
+}
+
 /* Telemetry Bar */
 #telemetry-bar {
     height: 30px;
